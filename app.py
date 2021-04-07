@@ -61,7 +61,6 @@ def precipitation():
 def stations():
     # Perform a query to retrieve stations ID
     station_query = session.query(station).all()
-    #stations = session.query(station.station).all() 
     # Create a dictionary from the row data and append to a list
     station_names = []
     for s in station_query:
@@ -70,6 +69,25 @@ def stations():
         station_dict["name"] = s.name
         station_names.append(station_dict)
     return jsonify(station_names)
+
+# Define what to do when a user hits the "TOBS" route
+@app.route("/api/v1.0/tobs")
+def tobs():
+    # Design a query to find the most active stations
+    active = session.query(measurement.station, func.count(measurement.prcp)).group_by(measurement.station).order_by(func.count(measurement.prcp).desc()).all()
+    most_active_id = active[0][0]
+    # Calculate the date one year from the last date in data set.
+    last_year = dt.date(2017,8,23) - dt.timedelta(365)
+    # Perform a query to retrieve most active station TOBS.
+    most_active_rain_query = session.query(measurement.date, measurement.tobs).filter(measurement.station == most_active_id, measurement.date >= last_year).order_by(measurement.date).all()
+    # Create a dictionary from the row data and append to a list
+    tobs_values = []
+    for t in most_active_rain_query:
+        tobs_dict = {}
+        tobs_dict["date"] = t.date
+        tobs_dict["tobs"] = t.tobs
+        tobs_values.append(tobs_dict)
+    return jsonify(tobs_values)
 
 if __name__ == "__main__":
     app.run(debug=True)
