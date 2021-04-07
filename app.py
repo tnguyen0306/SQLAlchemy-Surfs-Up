@@ -32,7 +32,7 @@ session = Session(engine)
 def home():
     print("Server received request for 'Home' page...")
     return (
-        f"Welcome to my 'SQLAlchemy Challenge' page!<br/>"
+        f"Welcome to my 'SQLAlchemy Challenge' page!<br/><br/>"
         f"Routes that are available:<br/>" 
         f"/api/v1.0/precipitation: Return the JSON representation of your dictionary.<br/>"
         f"/api/v1.0/stations: Return a JSON list of stations from the dataset.<br/>"
@@ -40,7 +40,7 @@ def home():
         f"/api/v1.0/&#60;start&#62; and /api/v1.0/&#60;start&#62;/&#60;end&#62;: Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.<br/>"
     )
 
-# Define what to do when a user hits the precipitation route
+# Define what to do when a user hits the "precipitation" route
 @app.route("/api/v1.0/precipitation")
 def precipitation():
     # Calculate the date one year from the last date in data set.
@@ -55,6 +55,21 @@ def precipitation():
         prcp_dict["prcp"] = p.prcp
         prcp_values.append(prcp_dict)
     return jsonify(prcp_values)
+
+# Define what to do when a user hits the "stations" route
+@app.route("/api/v1.0/stations")
+def stations():
+    # Perform a query to retrieve stations ID
+    station_query = session.query(station).all()
+    #stations = session.query(station.station).all() 
+    # Create a dictionary from the row data and append to a list
+    station_names = []
+    for s in station_query:
+        station_dict = {}
+        station_dict["station"] = s.station
+        station_dict["name"] = s.name
+        station_names.append(station_dict)
+    return jsonify(station_names)
 
 if __name__ == "__main__":
     app.run(debug=True)
