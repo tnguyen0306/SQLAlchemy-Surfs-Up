@@ -74,8 +74,8 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
     # Design a query to find the most active stations
-    active = session.query(measurement.station, func.count(measurement.prcp)).group_by(measurement.station).order_by(func.count(measurement.prcp).desc()).all()
-    most_active_id = active[0][0]
+    active_query = session.query(measurement.station, func.count(measurement.prcp)).group_by(measurement.station).order_by(func.count(measurement.prcp).desc()).all()
+    most_active_id = active_query[0][0]
     # Calculate the date one year from the last date in data set.
     last_year = dt.date(2017,8,23) - dt.timedelta(365)
     # Perform a query to retrieve most active station TOBS.
@@ -88,6 +88,26 @@ def tobs():
         tobs_dict["tobs"] = t.tobs
         tobs_values.append(tobs_dict)
     return jsonify(tobs_values)
+
+# Define what to do when a user hits the "start" route
+@app.route("/api/v1.0/<start>")
+def temperature_s(start):
+    # Set start and end dates for date range
+    start_date = dt.datetime.strptime(start, "%Y-%m-%d")
+    end_date = dt.datetime.strptime("2017-08-23", "%Y-%m-%d")
+    # Perform a query to retrieve temperature value in desired date.
+    temp_query = session.query(measurement.tobs).filter(measurement.date >= start_date, measurement.date <= end_date).all()
+    temperatures = [temp[0] for temp in temp_query]
+    # Calculate the lowest, highest, and average temperature.
+    lowest_temp = min(temperatures)
+    avg_temp = np.mean(temperatures)
+    highest_temp = max(temperatures)
+    # Dictionary of temperatures
+    temp_dict = {}
+    temp_dict["Minimum Temperature (TMIN)"] = lowest_temp
+    temp_dict["Average Temperature (TAVG)"] = avg_temp
+    temp_dict["Maximum Temperature (TMAX)"] = highest_temp
+    return jsonify(temp_dict)
 
 if __name__ == "__main__":
     app.run(debug=True)
