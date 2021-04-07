@@ -91,23 +91,44 @@ def tobs():
 
 # Define what to do when a user hits the "start" route
 @app.route("/api/v1.0/<start>")
-def temperature_s(start):
+def temp_start(start):
     # Set start and end dates for date range
     start_date = dt.datetime.strptime(start, "%Y-%m-%d")
     end_date = dt.datetime.strptime("2017-08-23", "%Y-%m-%d")
     # Perform a query to retrieve temperature value in desired date.
     temp_query = session.query(measurement.tobs).filter(measurement.date >= start_date, measurement.date <= end_date).all()
-    temperatures = [temp[0] for temp in temp_query]
+    temp = [t[0] for t in temp_query]
     # Calculate the lowest, highest, and average temperature.
-    lowest_temp = min(temperatures)
-    avg_temp = np.mean(temperatures)
-    highest_temp = max(temperatures)
+    lowest_temp = min(temp)
+    avg_temp = np.mean(temp)
+    highest_temp = max(temp)
     # Dictionary of temperatures
     temp_dict = {}
     temp_dict["Minimum Temperature (TMIN)"] = lowest_temp
     temp_dict["Average Temperature (TAVG)"] = avg_temp
     temp_dict["Maximum Temperature (TMAX)"] = highest_temp
     return jsonify(temp_dict)
+
+# Define what to do when a user hits the "start-end" route
+@app.route("/api/v1.0/<start>/<end>")
+def temp_start_end(start, end):
+    # Set start and end dates for date range
+    start_date = dt.datetime.strptime(start, "%Y-%m-%d")
+    end_date = dt.datetime.strptime(end, "%Y-%m-%d")
+    # Perform a query to retrieve temperature value in desired date.
+    temp_query = session.query(measurement.tobs).filter(measurement.date >= start_date, measurement.date <= end_date).all()
+    temp = [t[0] for t in temp_query]
+    # Calculate the lowest, highest, and average temperature.
+    lowest_temp = min(temp)
+    avg_temp = np.mean(temp)
+    highest_temp = max(temp)
+    # Dictionary of temperatures
+    temp_dict = {}
+    temp_dict["Minimum Temperature (TMIN)"] = lowest_temp
+    temp_dict["Average Temperature (TAVG)"] = avg_temp
+    temp_dict["Maximum Temperature (TMAX)"] = highest_temp
+    return jsonify(temp_dict)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
