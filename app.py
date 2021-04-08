@@ -21,8 +21,8 @@ Base = automap_base()
 Base.prepare(engine, reflect=True)
 
 # Save references to each table
-measurement = Base.classes.measurement
-station = Base.classes.station
+Measurement = Base.classes.measurement
+Station = Base.classes.station
 
 # Create our session (link) from Python to the DB
 session = Session(engine)
@@ -46,7 +46,7 @@ def precipitation():
     # Calculate the date one year from the last date in data set.
     last_year = dt.date(2017,8,23) - dt.timedelta(365)
     # Perform a query to retrieve the data and precipitation scores
-    rain_query = session.query(measurement.date, measurement.prcp).filter(measurement.date >= last_year).order_by(measurement.date).all()
+    rain_query = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date >= last_year).order_by(Measurement.date).all()
     # Create a dictionary from the row data and append to a list
     prcp_values = []
     for p in rain_query:
@@ -60,7 +60,7 @@ def precipitation():
 @app.route("/api/v1.0/stations")
 def stations():
     # Perform a query to retrieve stations ID
-    station_query = session.query(station).all()
+    station_query = session.query(Station).all()
     # Create a dictionary from the row data and append to a list
     station_names = []
     for s in station_query:
@@ -74,12 +74,12 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
     # Design a query to find the most active stations
-    active_query = session.query(measurement.station, func.count(measurement.prcp)).group_by(measurement.station).order_by(func.count(measurement.prcp).desc()).all()
+    active_query = session.query(Measurement.station, func.count(Measurement.prcp)).group_by(Measurement.station).order_by(func.count(Measurement.prcp).desc()).all()
     most_active_id = active_query[0][0]
     # Calculate the date one year from the last date in data set.
     last_year = dt.date(2017,8,23) - dt.timedelta(365)
     # Perform a query to retrieve most active station TOBS.
-    most_active_rain_query = session.query(measurement.date, measurement.tobs).filter(measurement.station == most_active_id, measurement.date >= last_year).order_by(measurement.date).all()
+    most_active_rain_query = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == most_active_id, Measurement.date >= last_year).order_by(Measurement.date).all()
     # Create a dictionary from the row data and append to a list
     tobs_values = []
     for t in most_active_rain_query:
@@ -96,7 +96,7 @@ def temp_start(start):
     start_date = dt.datetime.strptime(start, "%Y-%m-%d")
     end_date = dt.datetime.strptime("2017-08-23", "%Y-%m-%d")
     # Perform a query to retrieve temperature value in desired date.
-    temp_query = session.query(measurement.tobs).filter(measurement.date >= start_date, measurement.date <= end_date).all()
+    temp_query = session.query(Measurement.tobs).filter(Measurement.date >= start_date, Measurement.date <= end_date).all()
     temp = [t[0] for t in temp_query]
     # Calculate the lowest, highest, and average temperature.
     lowest_temp = min(temp)
@@ -116,7 +116,7 @@ def temp_start_end(start, end):
     start_date = dt.datetime.strptime(start, "%Y-%m-%d")
     end_date = dt.datetime.strptime(end, "%Y-%m-%d")
     # Perform a query to retrieve temperature value in desired date.
-    temp_query = session.query(measurement.tobs).filter(measurement.date >= start_date, measurement.date <= end_date).all()
+    temp_query = session.query(Measurement.tobs).filter(Measurement.date >= start_date, Measurement.date <= end_date).all()
     temp = [t[0] for t in temp_query]
     # Calculate the lowest, highest, and average temperature.
     lowest_temp = min(temp)
