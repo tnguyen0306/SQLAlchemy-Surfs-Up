@@ -30,6 +30,8 @@ To begin, use Python and SQLAlchemy to do basic climate analysis and data explor
 
 * Plot the results using the DataFrame `plot` method.
 
+![last 12 months of precipitation data](images/PreData.png)
+
 * Use Pandas to print the summary statistics for the precipitation data.
 
 ### Station Analysis
@@ -54,6 +56,8 @@ To begin, use Python and SQLAlchemy to do basic climate analysis and data explor
 
   * Plot the results as a histogram with `bins=12`.
 
+![last 12 months of temperature observation data](images/ObservedData.png)
+
 * Close out your session.
 
 - - -
@@ -72,20 +76,28 @@ Now that you have completed your initial analysis, design a Flask API based on t
 
   * List all routes that are available.
 
+![home](images/home.png)
+
 * `/api/v1.0/precipitation`
 
   * Convert the query results to a dictionary using `date` as the key and `prcp` as the value.
 
   * Return the JSON representation of your dictionary.
 
+![precipitation](images/pre.png)
+
 * `/api/v1.0/stations`
 
   * Return a JSON list of stations from the dataset.
+
+![stations](images/stations.png)
 
 * `/api/v1.0/tobs`
   * Query the dates and temperature observations of the most active station for the last year of data.
 
   * Return a JSON list of temperature observations (TOBS) for the previous year.
+
+![TOBS](images/tobs.png)
 
 * `/api/v1.0/<start>` and `/api/v1.0/<start>/<end>`
 
@@ -94,6 +106,8 @@ Now that you have completed your initial analysis, design a Flask API based on t
   * When given the start only, calculate `TMIN`, `TAVG`, and `TMAX` for all dates greater than and equal to the start date.
 
   * When given the start and the end date, calculate the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.
+
+![calulation](images/cal.png)
 
 ## Hints
 
@@ -125,6 +139,8 @@ Now that you have completed your initial analysis, design a Flask API based on t
 
 * Use the t-test to determine whether the difference in the means, if any, is statistically significant. Will you use a paired t-test, or an unpaired t-test? Why?
 
+![Bonus 1 result](images/bonus1.png)
+
 ### Temperature Analysis II
 
 * You are looking to take a trip from August first to August seventh of this year, but are worried that the weather will be less than ideal. Using historical data in the dataset find out what the temperature has previously looked like.
@@ -140,6 +156,8 @@ Now that you have completed your initial analysis, design a Flask API based on t
   * Use the average temperature as the bar height (y value).
 
   * Use the peak-to-peak (TMAX-TMIN) value as the y error bar (YERR).
+
+![Bonus 2 result 1](images/bonus2-1.png)
 
 ### Daily Rainfall Average
 
@@ -162,6 +180,8 @@ Now that you have completed your initial analysis, design a Flask API based on t
 * Load the list of daily normals into a Pandas DataFrame and set the index equal to the date.
 
 * Use Pandas to plot an area plot (`stacked=False`) for the daily normals.
+
+![Bonus 2 result 2](images/bonus2-2.png)
 
 * Close out your session.
 
